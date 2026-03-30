@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusHub | Vivek Singh</title>
+<link rel="icon" type="image/jpeg" href="pic.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Mono:wght@300;400;500&family=Fraunces:opsz,wght@9..144,300;9..144,600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F0EDE6;
+    --warm-white: #FAF8F4;
+    --ink: #1A1A18;
+    --muted: #7A7870;
+    --accent: #C8F135;
+    --border: rgba(26,26,24,0.10);
+    --card-bg: rgba(255,255,255,0.92);
+    --shadow-card: 0 20px 50px rgba(0,0,0,0.07);
+    --nav-bg: rgba(240,237,230,0.78);
+    --dot-color: rgba(26,26,24,0.11);
+    --toggle-bg: #1A1A18;
+    --toggle-icon-color: #C8F135;
+  }
+
+  [data-theme="dark"] {
+    --cream: #111110;
+    --warm-white: #1A1A18;
+    --ink: #F0EDE6;
+    --muted: #8A8880;
+    --accent: #C8F135;
+    --border: rgba(240,237,230,0.08);
+    --card-bg: rgba(30,30,28,0.92);
+    --shadow-card: 0 20px 50px rgba(0,0,0,0.32);
+    --nav-bg: rgba(17,17,16,0.82);
+    --dot-color: rgba(240,237,230,0.08);
+    --toggle-bg: #F0EDE6;
+    --toggle-icon-color: #1A1A18;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at top left, rgba(200,241,53,0.20), transparent 34%),
+      radial-gradient(circle at bottom right, rgba(200,241,53,0.16), transparent 28%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  a { color: inherit; }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 2rem;
+    backdrop-filter: blur(14px);
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    text-decoration: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .nav-link:hover { opacity: 1; }
+
+  .theme-toggle {
+    position: fixed;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    z-index: 30;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: none;
+    background: var(--toggle-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .toggle-icon {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    transition: opacity 0.3s ease, transform 0.35s ease;
+  }
+
+  .icon-sun {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+  }
+
+  .icon-moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  [data-theme="dark"] .icon-sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  [data-theme="dark"] .icon-moon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .hero-card,
+  .detail-card,
+  .gallery-card,
+  .next-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .hero-card {
+    padding: 1.35rem 1.5rem 1.5rem;
+    overflow: hidden;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 36px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 1.2rem;
+    align-items: stretch;
+  }
+
+  .hero-copy {
+    padding: 1rem 0;
+  }
+
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.8rem, 7vw, 5.2rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    max-width: 10ch;
+    margin-bottom: 1rem;
+  }
+
+  .hero-text {
+    font-size: 0.84rem;
+    line-height: 1.95;
+    color: var(--muted);
+    max-width: 56ch;
+    margin-bottom: 1.4rem;
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.72rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.65);
+    font-size: 0.74rem;
+    color: var(--ink);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0.85rem 1.3rem;
+    border-radius: 999px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .button.primary {
+    background: var(--accent);
+    border-color: transparent;
+  }
+
+  .hero-visual {
+    width: fit-content;
+    height: fit-content;
+    max-width: 520px;
+    margin: 0 auto;
+    border-radius: 24px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.78);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem;
+    align-self: center;
+  }
+
+  .hero-visual-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .hero-visual img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center center;
+    display: block;
+  }
+
+  .meta-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  .meta-box {
+    padding: 1rem 1.05rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: rgba(255,255,255,0.58);
+  }
+
+  .meta-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.45rem;
+  }
+
+  .meta-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .section {
+    margin-top: 1.6rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0 0.2rem;
+  }
+
+  .section-title {
+    font-size: 0.86rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(26,26,24,0.10);
+  }
+
+  .section-count {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .detail-card {
+    padding: 1.4rem;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .detail-block {
+    padding: 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: rgba(255,255,255,0.56);
+  }
+
+  .detail-block h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .detail-block p {
+    font-size: 0.8rem;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  .gallery-card {
+    padding: 1.4rem;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .gallery-image {
+    border-radius: 24px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.78);
+    width: fit-content;
+    height: fit-content;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem;
+    align-self: center;
+  }
+
+  .gallery-image img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center center;
+    display: block;
+  }
+
+  .gallery-notes {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .note {
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 1.2rem;
+    background: rgba(255,255,255,0.56);
+  }
+
+  .note h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .note p {
+    font-size: 0.78rem;
+    line-height: 1.85;
+    color: var(--muted);
+  }
+
+  .next-card {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.6rem;
+  }
+
+  .next-copy h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .next-copy p {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 58ch;
+  }
+
+  [data-theme="dark"] .hero-visual,
+  [data-theme="dark"] .gallery-image,
+  [data-theme="dark"] .pill,
+  [data-theme="dark"] .meta-box,
+  [data-theme="dark"] .detail-block,
+  [data-theme="dark"] .note {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(240,237,230,0.08);
+  }
+
+  [data-theme="dark"] .button.primary {
+    color: #171712;
+  }
+
+  [data-theme="dark"] .button:not(.primary) {
+    background: rgba(255,255,255,0.04);
+  }
+
+  @media (max-width: 960px) {
+    nav {
+      padding: 1rem 1.1rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.7rem;
+    }
+
+    main {
+      padding: 1.2rem 1rem 2rem;
+    }
+
+    .hero-grid,
+    .gallery-grid,
+    .detail-grid,
+    .meta-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+      max-width: none;
+    }
+
+    .next-card {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 640px) {
+    nav {
+      padding: 0.9rem 0.9rem;
+    }
+
+    .nav-logo {
+      font-size: 1.1rem;
+    }
+
+    .nav-link {
+      font-size: 0.68rem;
+    }
+
+    main {
+      padding: 1rem 0.75rem 1.5rem;
+    }
+
+    .hero-card,
+    .detail-card,
+    .gallery-card,
+    .next-card {
+      border-radius: 22px;
+    }
+
+    .hero-card,
+    .detail-card,
+    .gallery-card,
+    .next-card {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.1rem, 11vw, 3.2rem);
+    }
+
+    .hero-text,
+    .next-copy p {
+      max-width: none;
+    }
+
+    .hero-actions,
+    .hero-pills {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .button {
+      width: 100%;
+    }
+
+    .hero-visual,
+    .gallery-image {
+      max-width: 100%;
+      padding: 0.65rem;
+    }
+
+    .meta-box,
+    .detail-block,
+    .note {
+      padding: 0.95rem;
+    }
+
+    .theme-toggle {
+      width: 48px;
+      height: 48px;
+      right: 0.9rem;
+      bottom: 0.9rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <nav>
+    <a href="LinksVivek.html" class="nav-logo">VS_</a>
+    <a href="LinksVivek.html#work" class="nav-link">Back to Portfolio</a>
+  </nav>
+
+  <main>
+    <section class="hero-card">
+      <div class="eyebrow">Featured Project</div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="hero-title">CampusHub case study.</h1>
+          <p class="hero-text">
+            CampusHub is a student-focused web platform designed to bring campus events, notices, and opportunities into one clean place. The project was built to reduce information chaos and make it easier for students to discover what matters without jumping across scattered groups or channels.
+          </p>
+          <div class="hero-pills">
+            <span class="pill">Full Stack Build</span>
+            <span class="pill">React + Node.js</span>
+            <span class="pill">MongoDB</span>
+            <span class="pill">Student Product</span>
+          </div>
+          <div class="hero-actions">
+            <a href="LinksVivek.html#connect" class="button primary">Let's Connect</a>
+            <a href="LinksVivek.html#work" class="button">See More Projects</a>
+          </div>
+        </div>
+        <div class="hero-visual-wrap">
+          <div class="hero-visual">
+            <img src="c.png" alt="CampusHub project preview">
+          </div>
+          <a href="https://campus-hub-self-two.vercel.app/" target="_blank" rel="noopener noreferrer" class="button primary">View Live Project</a>
+        </div>
+      </div>
+
+      <div class="meta-strip">
+        <div class="meta-box">
+          <div class="meta-label">Role</div>
+          <div class="meta-value">Full Stack Developer</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Focus</div>
+          <div class="meta-value">Product + UX</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Category</div>
+          <div class="meta-value">Student Platform</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Status</div>
+          <div class="meta-value">Portfolio Ready</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">Project Breakdown</span>
+        <div class="section-line"></div>
+        <span class="section-count">03 parts</span>
+      </div>
+      <div class="detail-card">
+        <div class="detail-grid">
+          <div class="detail-block">
+            <h3>Problem</h3>
+            <p>
+              Students usually get updates through posters, WhatsApp groups, separate notices, and word of mouth. That makes event discovery fragmented and causes important information to be missed.
+            </p>
+          </div>
+          <div class="detail-block">
+            <h3>Approach</h3>
+            <p>
+              I focused on a single interface where events, opportunities, and updates could live together with cleaner structure, better discoverability, and a more usable student experience.
+            </p>
+          </div>
+          <div class="detail-block">
+            <h3>Outcome</h3>
+            <p>
+              The project became a strong portfolio piece because it combines practical product thinking with full stack implementation, interface design, and real-world use-case clarity.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <span class="section-title">Inside The Build</span>
+        <div class="section-line"></div>
+        <span class="section-count">UI + Notes</span>
+      </div>
+      <div class="gallery-card">
+        <div class="gallery-grid">
+          <div class="gallery-image">
+            <img src="IMG.png" alt="CampusHub interface preview">
+          </div>
+          <div class="gallery-notes">
+            <div class="note">
+              <h3>Design Direction</h3>
+              <p>
+                The interface was planned to feel direct and practical, with less clutter and faster scanning so students can immediately find what is happening on campus.
+              </p>
+            </div>
+            <div class="note">
+              <h3>Tech Decisions</h3>
+              <p>
+                The stack was chosen to support a responsive frontend, manageable backend logic, and a simple path to extend features like authentication, listings, and admin workflows.
+              </p>
+            </div>
+            <div class="note">
+              <h3>What It Shows</h3>
+              <p>
+                This project highlights my ability to think beyond just coding by combining user needs, project structure, and implementation decisions into a cohesive product story.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-card">
+      <div class="next-copy">
+        <h2>Let's work on some ideas.</h2>
+        <p>
+          I can add dedicated case study pages for the other projects too, with matching layout and content so the full portfolio feels consistent.
+        </p>
+      </div>
+      <a href="LinksVivek.html#connect" class="button primary">Contact Me</a>
+    </section>
+  </main>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <svg class="toggle-icon icon-moon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" fill="var(--toggle-icon-color)"/>
+    </svg>
+    <svg class="toggle-icon icon-sun" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="4" fill="var(--toggle-icon-color)"/>
+      <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="var(--toggle-icon-color)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <script>
+    const htmlEl = document.documentElement;
+    const toggleBtn = document.getElementById('themeToggle');
+    const savedTheme = (() => { try { return localStorage.getItem('portfolio-theme'); } catch (e) { return null; } })();
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    htmlEl.setAttribute('data-theme', initialTheme);
+
+    toggleBtn.addEventListener('click', () => {
+      const next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      htmlEl.setAttribute('data-theme', next);
+      try { localStorage.setItem('portfolio-theme', next); } catch (e) {}
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      try {
+        if (!localStorage.getItem('portfolio-theme')) {
+          htmlEl.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        }
+      } catch (e2) {}
+    });
+  </script>
+</body>
+</html>
