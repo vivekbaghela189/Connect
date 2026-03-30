@@ -55,40 +55,65 @@
     font-family: 'DM Mono', monospace;
     min-height: 100vh;
     overflow-x: hidden;
-    cursor: none;
   }
 
   /* ── PENCIL CURSOR ── */
-  * { cursor: none !important; }
+  @media (hover: hover) and (pointer: fine) {
+    body,
+    a,
+    button,
+    .work-card,
+    .connect-btn,
+    .theme-toggle {
+      cursor: none;
+    }
+  }
 
-  #pencilCursor {
+  #smartCursor {
     position: fixed;
     top: 0; left: 0;
-    width: 48px; height: 48px;
+    width: 14px; height: 14px;
     pointer-events: none;
     z-index: 99999;
-    will-change: left, top;
-    /* tip of pencil at pointer */
-    margin-left: -8px;
-    margin-top: -44px;
-    overflow: visible;
+    border-radius: 50%;
+    background: var(--ink);
+    opacity: 0;
+    transform: translate3d(-100px, -100px, 0);
+    transition: opacity 0.18s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
   }
 
-  /* orbit ring shown on hover */
-  #cursorRing {
-    width: 50px; height: 50px;
-    border: 2px solid var(--ink);
+  #smartCursor::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 1px solid rgba(26,26,24,0.22);
     border-radius: 50%;
-    position: fixed;
-    top: 0; left: 0;
-    pointer-events: none;
-    z-index: 99998;
-    margin-left: -25px;
-    margin-top: -25px;
-    opacity: 0;
-    transition: opacity 0.25s ease !important;
+    transform: scale(1);
+    transition: transform 0.2s ease, border-color 0.2s ease;
   }
-  #cursorRing.visible { opacity: 0.4; }
+
+  #smartCursor.is-visible { opacity: 1; }
+
+  #smartCursor.is-active {
+    background: var(--accent);
+    box-shadow: 0 0 0 8px rgba(200,241,53,0.18);
+  }
+
+  #smartCursor.is-active::after {
+    transform: scale(1.5);
+    border-color: rgba(168,208,16,0.55);
+  }
+
+  #smartCursor.is-pressed::after {
+    transform: scale(0.82);
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    #smartCursor {
+      display: none;
+    }
+  }
 
   /* Dot grid background */
   body::before {
@@ -449,7 +474,6 @@
     background: var(--card-bg);
     border-radius: 20px;
     padding: 2rem;
-    cursor: none;
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     border: 1px solid var(--border);
     position: relative;
@@ -1000,7 +1024,7 @@
     font-size: 0.8rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    cursor: none;
+    cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
   }
 
@@ -1054,7 +1078,7 @@
     border-radius: 50%;
     background: var(--toggle-bg);
     border: none;
-    cursor: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1432,12 +1456,7 @@
 </head>
 <body>
 
-<div id="cursorRing"></div>
-
-<!-- PENCIL CURSOR -->
-<svg id="pencilCursor" viewBox="0 0 48 48" width="48" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- body filled initially by JS -->
-</svg>
+<div id="smartCursor" aria-hidden="true"></div>
 
 <!-- Side dots -->
 <div class="side-dot">
@@ -1658,13 +1677,13 @@
   <div id="work" class="section-header">
     <span class="section-title">Featured Work</span>
     <div class="section-line"></div>
-    <span class="section-count">04 projects</span>
+    <span class="section-count">02 projects</span>
   </div>
 
   <div class="works-grid">
     <div class="work-card">
       <div class="work-card-img w1"><img src="c.png" alt="CampusHub preview"></div>
-      <div class="work-tag">Web App - Student Platform</div>
+      <div class="work-tag">Web App - Campus Events Explorer</div>
       <h3 class="work-title">CampusHub</h3>
       <p class="work-desc">Designed and developed a centralized student platform to manage events, opportunities, and updates, improving accessibility and user engagement for college students.</p>
       <a href="campushub-case.html" class="work-cta">View case study</a>
@@ -1672,25 +1691,9 @@
 
     <div class="work-card">
       <div class="work-card-img w2">Coming Soon...</div>
-      <div class="work-tag">Full Stack - Portfolio</div>
+      <div class="work-tag">Web App - Learning Platform</div>
       <h3 class="work-title">Lernix</h3>
       <p class="work-desc">A personal portfolio and interaction playground built to experiment with motion, layout systems, and custom UI ideas while keeping the experience lightweight and fast.</p>
-      <a href="#" class="work-cta">View case study</a>
-    </div>
-
-    <div class="work-card">
-      <div class="work-card-img w3">Coming Soon...</div>
-      <div class="work-tag">Problem Solving</div>
-      <h3 class="work-title">DSA Journey</h3>
-      <p class="work-desc">Solved 500+ DSA problems across platforms while building consistency in logic, debugging, and interview-style problem solving.</p>
-      <a href="#" class="work-cta">View case study</a>
-    </div>
-
-    <div class="work-card">
-      <div class="work-card-img w4">Coming Soon...</div>
-      <div class="work-tag">Open Source - Learning</div>
-      <h3 class="work-title">More Builds</h3>
-      <p class="work-desc">More experiments, utilities, and full stack projects are in progress, with a focus on practical products, cleaner architecture, and stronger execution.</p>
       <a href="#" class="work-cta">View case study</a>
     </div>
   </div>
@@ -1824,11 +1827,12 @@
   }, 2600);
 
   // ── PENCIL CURSOR ──────────────────────────────────────────
-  const pencil = document.getElementById('pencilCursor');
-  const ring   = document.getElementById('cursorRing');
+  const smartCursor = document.getElementById('smartCursor');
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   // Each mode: SVG inner content for a 48×48 viewBox pencil pointing tip-down
   // Pencil tip is at bottom-center (24, 46)
+  if (false) {
   const PENCIL = {
     default: {
       body:   '#F5C842',
@@ -1928,6 +1932,57 @@
     el.addEventListener('mouseenter', () => setPencilMode('text'));
     el.addEventListener('mouseleave', () => setPencilMode('default'));
   });
+  }
+
+  if (smartCursor && finePointer.matches) {
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let rafId = null;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ease = reducedMotion ? 1 : 0.22;
+
+    const renderCursor = () => {
+      currentX += (targetX - currentX) * ease;
+      currentY += (targetY - currentY) * ease;
+      smartCursor.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) translate(-50%, -50%)`;
+
+      if (Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1) {
+        rafId = requestAnimationFrame(renderCursor);
+      } else {
+        rafId = null;
+      }
+    };
+
+    const queueRender = () => {
+      if (rafId === null) rafId = requestAnimationFrame(renderCursor);
+    };
+
+    document.addEventListener('pointermove', event => {
+      targetX = event.clientX;
+      targetY = event.clientY;
+      smartCursor.classList.add('is-visible');
+      queueRender();
+    }, { passive: true });
+
+    document.addEventListener('pointerleave', () => {
+      smartCursor.classList.remove('is-visible');
+      smartCursor.classList.remove('is-active');
+      smartCursor.classList.remove('is-pressed');
+    });
+
+    document.addEventListener('pointerdown', () => smartCursor.classList.add('is-pressed'));
+    document.addEventListener('pointerup', () => smartCursor.classList.remove('is-pressed'));
+
+    document.querySelectorAll('a, button, .work-card').forEach(el => {
+      el.addEventListener('pointerenter', () => smartCursor.classList.add('is-active'));
+      el.addEventListener('pointerleave', () => {
+        smartCursor.classList.remove('is-active');
+        smartCursor.classList.remove('is-pressed');
+      });
+    });
+  }
 
   // ── ORBITING STICKER PENCIL ────────────────────────────────
   const stickerCard = document.getElementById('stickerCard');
